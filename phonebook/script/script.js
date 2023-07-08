@@ -190,11 +190,16 @@ const data = [
   const createFooter = () => {
     const footer = document.createElement('footer');
     footer.classList.add('footer');
+
+    const footerContainer = createContainer();
+    footer.append(footerContainer);
+
+    footer.footerContainer = footerContainer;
     const footerText = document.createElement('p');
     footerText.classList.add('footer__text');
     footerText.textContent = 'Все права защищены Даниил';
-    footer.append(footerText);
 
+    footer.footerContainer.append(footerText);
     return footer;
   };
 
