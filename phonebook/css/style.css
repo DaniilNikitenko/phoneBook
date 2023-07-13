@@ -149,4 +149,31 @@ body {
 .name,
 .surname {
 	cursor: pointer;
+	position: relative;
+	width: 140px;
+}
+
+.surname {
+	width: 220px;
+}
+
+.sort {}
+
+.sort:before {
+	content: '';
+	position: absolute;
+	top: 20%;
+	left: 40%;
+	width: 24px;
+	height: 24px;
+	transform: rotate(0deg);
+	background-image: url('../img/caret-down.png');
+	background-size: 24px;
+	background-repeat: no-repeat;
+	transition: transform 0.4s ease-in-out;
+}
+
+.sort-reverse:before {
+	content: '';
+	transform: rotate(180deg);
 }

@@ -91,9 +91,10 @@ const data = [
         `
 	  <tr>
 		<th class="delete">Удалить</th>
-		<th class ="name">Имя</th>
-		<th class ="surname">Фамилия</th>
+		<th class ="name sort">Имя</th>
+		<th class ="surname sort">Фамилия</th>
 		<th class ="table-heading">Телефон</th>
+		<th class ="table-heading">Редактировать</th>
 	  </tr>
 	`,
     );
@@ -132,6 +133,7 @@ const data = [
 		  <label class="form-label" for="phone">Телефон:</label>
 		  <input class="form-input" name="phone" id="phone" type="number" required>
 		</div>
+		
 	`,
     );
 
@@ -234,6 +236,29 @@ const data = [
     });
   };
 
+  const sortTable = (table, tbody, colNum, type) => {
+    const rowsArray = [].slice.call(tbody.rows);
+    let compare;
+    switch (type) {
+      case 'number':
+        compare = function(rowA, rowB) {
+          return rowA.cells[colNum].innerHTML - rowB.cells[colNum].innerHTML;
+        };
+        break;
+      case 'string':
+        compare = function(rowA, rowB) {
+          return rowA.cells[colNum].innerHTML > rowB.cells[colNum].innerHTML;
+        };
+        break;
+    }
+    rowsArray.sort(compare);
+    table.removeChild(tbody);
+    for (let i = 0; i < rowsArray.length; i++) {
+      tbody.appendChild(rowsArray[i]);
+    }
+    table.appendChild(tbody);
+  };
+
   const renderPhoneBook = (app, title) => {
     const header = createHeader();
     const logo = createLogo(title);
@@ -304,14 +329,65 @@ const data = [
       }
     });
 
+    let sortDirection = 'asc';
+    let currentSortField = null;
+
     tableHead.addEventListener('click', (e) => {
       const target = e.target;
       if (target.classList.contains('name')) {
-        data.sort((a, b) => a.name.localeCompare(b.name));
+        switch (true) {
+          case currentSortField !== 'name':
+            sortDirection = 'asc';
+            currentSortField = 'name';
+            break;
+          default:
+            sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            break;
+        }
+        switch (sortDirection) {
+          case 'asc':
+            data.sort((a, b) => a.name.localeCompare(b.name));
+            break;
+          default:
+            data.sort((a, b) => b.name.localeCompare(a.name));
+            break;
+        }
+
+        const otherSortField = tableHead.querySelector('.surname');
+        if (otherSortField !== target) {
+          otherSortField.classList.remove('sort-reverse');
+        }
+
+        target.classList.toggle('sort-reverse', sortDirection === 'asc');
+
         list.innerHTML = '';
         renderContacts(list, data);
       } else if (target.classList.contains('surname')) {
-        data.sort((a, b) => a.surname.localeCompare(b.surname));
+        switch (true) {
+          case currentSortField !== 'surname':
+            sortDirection = 'asc';
+            currentSortField = 'surname';
+            break;
+          default:
+            sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            break;
+        }
+        switch (sortDirection) {
+          case 'asc':
+            data.sort((a, b) => a.surname.localeCompare(b.surname));
+            break;
+          default:
+            data.sort((a, b) => b.surname.localeCompare(a.surname));
+            break;
+        }
+
+        const otherSortField = tableHead.querySelector('.name');
+        if (otherSortField !== target) {
+          otherSortField.classList.remove('sort-reverse');
+        }
+
+        target.classList.toggle('sort-reverse', sortDirection === 'asc');
+
         list.innerHTML = '';
         renderContacts(list, data);
       }
